@@ -8,6 +8,7 @@ public class Parser
 	// at the beginning of the method.
 	
 	Token token;          // current token from the input stream
+	Variable currentFunction; // current function
 	Lexer lexer;
 	
 	// 파서 생성. lexer 설정 후 next로 첫번째 읽어옴.
@@ -50,7 +51,7 @@ public class Parser
 			System.err.println("Syntax Error: expecting: " + tok + "; saw: " + token);
 			token = lexer.next();
 		}
-		while (token != Token.eofTok  && !token.type().equals(TokenType.Semicolon));
+		while (token != Token.eofTok && !token.type().equals(TokenType.Semicolon));
 		token = lexer.next();
 	}
 	
@@ -58,26 +59,137 @@ public class Parser
 	public Program program()
 	{
 		// Program --> { Type Identifier FunctionOrGlobal } MainFunction
-		TokenType[] header = {TokenType.Int, TokenType.Main,
-				TokenType.LeftParen, TokenType.RightParen};
+		Declarations globals = new Declarations();
+		Functions functions = new Functions();
 		
-		// int main() 을 확인.
-		for (int i = 0; i < header.length; i++)   // bypass "int main ( )"
+		// 토큰이 타입일 경우 반복
+		while (isType())
 		{
-			match(header[i]);
+			FunctionOrGlobal(globals, functions);
 		}
+		
+		Function mainFunction = MainFunction();
+		functions.add(mainFunction);
+		
+		return new Program(globals, functions);
+	}
+	
+	// 함수 혹은 글로벌 변수 추가함.
+	private void FunctionOrGlobal(Declarations globals, Functions functions)
+	{
+		// FunctionOrGlobal -> (Parameters) {Declarations Statements} | Global
+		
+		// Type
+		Type t = type();
+		// 메인 함수 체크
+		if (t.equals(Type.INT) && isMain())
+		{
+			return;
+		}
+		// Identifier
+		Variable v = new Variable(match(TokenType.Identifier));
+		
+		// ( 나오면 함수
+		if (isLeftParen())
+		{
+			// 현재 함수 세팅
+			currentFunction = v;
+			
+			// 다음 토큰
+			token = lexer.next();
+			
+			// Parameters
+			Declarations parameters = Parameters();
+			// )
+			match(TokenType.RightParen);
+			// {
+			match(TokenType.LeftBrace);
+			// Declarations
+			Declarations locals = declarations();
+			// Statements
+			Block body = statementsWithoutBrackets();
+			// }
+			match(TokenType.RightBrace);
+			functions.add(new Function(t, v.toString(), parameters, locals, body));
+		}
+		else
+		{
+			// Global
+			Global(t, globals);
+		}
+	}
+	
+	private Declarations Parameters()
+	{
+		// Parameters  --> [ Parameter {, Parameter } ]
+		// Parameter --> Type, Identifier
+		Declarations parameters = new Declarations();
+		// <<Type>>
+		Type t = type();
+		// <<Identifier>>
+		Variable v = new Variable(match(TokenType.Identifier));
+		// <<Parameter>> 추가
+		parameters.add(new Declaration(v, t));
+		
+		// , 나올 때마다 계속 추가
+		while (isComma())
+		{
+			// 다음 토큰
+			token = lexer.next();
+			
+			// <<Type>>
+			t = type();
+			// <<Identifier>>
+			v = new Variable(match(TokenType.Identifier));
+			// <<Parameter>> 추가
+			parameters.add(new Declaration(v, t));
+		}
+		
+		return parameters;
+	}
+	
+	private void Global(Type globalType, Declarations globals)
+	{
+		// , 나올 때마다 계속 추가
+		while (isComma())
+		{
+			// 다음 토큰
+			token = lexer.next();
+			
+			// <<Identifier>>
+			Variable v = new Variable(match(TokenType.Identifier));
+			// <<Declaration>> 추가
+			globals.add(new Declaration(v, globalType));
+		}
+		
+		// 끝은 세미콜론
+		match(TokenType.Semicolon);
+	}
+	
+	// 메인 함수
+	private Function MainFunction()
+	{
+		// MainFunction -> int main() { Declarations Statements }
+		
+		// int main( params )
+		//match(TokenType.Int);
+		match(TokenType.Main);
+		match(TokenType.LeftParen);
+		Declarations params = declarations();
+		match(TokenType.RightParen);
 		
 		// { 열었는지 확인.
 		match(TokenType.LeftBrace);
 		// student exercise
 		
 		// <<Declarations>>  <<Statements>>
-		Declarations declarations = declarations();
-		Block block = statementsWithoutBrackets();
+		Declarations locals = declarations();
+		Block body = statementsWithoutBrackets();
 		
 		// } 닫았는지 확인.
 		match(TokenType.RightBrace);
-		return new Program(declarations, block);
+		
+		return new Function(Type.INT, Token.mainTok.toString(), params, locals, body);
 	}
 	
 	// <<Declarations>> -> {<<Declaration>>}
@@ -183,10 +295,24 @@ public class Parser
 		{
 			s = statements();
 		}
-		// <<Assignment>>
+		// <<Assignment>> OR CallStatement
 		else if (token.type().equals(TokenType.Identifier))
 		{
-			s = assignment();
+			Variable identifier = new Variable(token.value());
+			match(TokenType.Identifier);
+			
+			// Assignment
+			if(token.type().equals(TokenType.Assign))
+			{
+				s = assignment(identifier);
+			}
+			// CallStatement
+			else if(token.type().equals(TokenType.LeftParen))
+			{
+				Call c = callStatement(identifier);
+				match(TokenType.Semicolon);
+				s = c;
+			}
 		}
 		// <<IfStatement>>
 		else if (token.type().equals(TokenType.If))
@@ -197,6 +323,11 @@ public class Parser
 		else if (token.type().equals(TokenType.While))
 		{
 			s = whileStatement();
+		}
+		// ReturnStatement
+		else if(token.type().equals(TokenType.Return))
+		{
+			s = returnStatement();
 		}
 		// 에러.
 		else
@@ -241,11 +372,11 @@ public class Parser
 	}
 	
 	// 대입 <<Identifier>> = <<Expression>>
-	private Assignment assignment()
+	private Assignment assignment(Variable identifier)
 	{
 		// Assignment --> Identifier = Expression ;
 		// <<Identifier>>
-		Variable v = new Variable(match(TokenType.Identifier));
+		//Variable v = new Variable(match(TokenType.Identifier));
 		// =
 		match(TokenType.Assign);
 		// <<Expression>>
@@ -253,7 +384,7 @@ public class Parser
 		// ; 으로 끝난다.
 		match(TokenType.Semicolon);
 		
-		return new Assignment(v, e);  // student exercise
+		return new Assignment(identifier, e);  // student exercise
 	}
 	
 	// if, if ( <<Expression>> ) <<Statement>> [ else <<Statement>> ]
@@ -277,7 +408,7 @@ public class Parser
 		if (token.type().equals(TokenType.Else))
 		{
 			// else
-			lexer.next();
+			token = lexer.next();
 			
 			// <<Statement>>
 			Statement elseState = statement();
@@ -305,7 +436,46 @@ public class Parser
 		// <<Statement>>
 		Statement s = statement();
 		
-		return  new Loop(e, s);  // student exercise
+		return new Loop(e, s);  // student exercise
+	}
+	
+	// Call Statement
+	private Call callStatement(Variable identifier)
+	{
+		// CallStatement -> Call;
+		// Call -> Identifier ( Arguments )
+		
+		// (
+		match(TokenType.LeftParen);
+		
+		ArrayList<Expression> arguments = new ArrayList<>();
+		// ) 괄호 닫는 것 까지 돌면서 Arguments 추가.
+		while (!(token.type().equals(TokenType.RightParen)))
+		{
+			arguments.add(expression());
+			if (isComma())
+			{
+				match(TokenType.Comma);
+			}
+		}
+		// )
+		match(TokenType.RightParen);
+		
+		return new Call(identifier.toString(), arguments);
+	}
+	
+	// ReturnStatement
+	private Return returnStatement()
+	{
+		// ReturnStatement -> return Expression;
+		// return
+		match(TokenType.Return);
+		// expression
+		Expression ret = expression();
+		// ;
+		match(TokenType.Semicolon);
+		
+		return new Return(currentFunction, ret);
 	}
 	
 	// 식
@@ -427,12 +597,23 @@ public class Parser
 	private Expression primary()
 	{
 		// Primary --> Identifier | Literal | ( Expression )
-		//             | Type ( Expression )
+		//             | Type ( Expression ) | Identifier(Arguments)
 		Expression e = null;
-		// 식별자.
+		// 식별자. 변수 혹은 함수 호출
 		if (token.type().equals(TokenType.Identifier))
 		{
-			e = new Variable(match(TokenType.Identifier));
+			Variable v = new Variable(match(TokenType.Identifier));
+			
+			// 함수 호출
+			if (token.type().equals(TokenType.LeftParen))
+			{
+				e = callStatement(v);
+			}
+			// variable
+			else
+			{
+				e = v;
+			}
 		}
 		// 리터럴
 		else if (isLiteral())
@@ -573,14 +754,27 @@ public class Parser
 		return token.type().equals(TokenType.Comma);
 	}
 	
-	// <<Statement>>인가. (;(Skip) | Block | Assignment | IfStatement | WhileStatement)
+	// ( 인가 (왼쪽 소괄호)
+	private boolean isLeftParen()
+	{
+		return token.type().equals(TokenType.LeftParen);
+	}
+	
+	// main 인가
+	private boolean isMain()
+	{
+		return token.type().equals(TokenType.Main);
+	}
+	
+	// <<Statement>>인가. (;(Skip) | Block | Assignment | IfStatement | WhileStatement | CallStatement | ReturnStatement)
 	private boolean isStatement()
 	{
 		return token.type().equals(TokenType.Semicolon)
 				|| token.type().equals(TokenType.LeftBrace)
 				|| token.type().equals(TokenType.Identifier)
 				|| token.type().equals(TokenType.If)
-				|| token.type().equals(TokenType.While);
+				|| token.type().equals(TokenType.While)
+				|| token.type().equals(TokenType.Return);
 	}
 	
 	// || 인가
@@ -598,7 +792,7 @@ public class Parser
 	public static void main(String args[])
 	{
 		//Parser parser  = new Parser(new Lexer(args[0]));
-		String fileName = "../Test Programs/nested.cpp";
+		String fileName = "../Test Programs/recFib.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		Display.print(0, "Begin parsing... " + fileName + "\n");
 		Program prog = parser.program();

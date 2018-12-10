@@ -8,13 +8,24 @@ class Program
 {
 	// Program = Declarations decpart ; Block body
 	// <<Declarations>>  <<Statements>>
+	// 에러를 막기 위한 더미 코드
 	Declarations decpart;
 	Block body;
 	
-	Program(Declarations d, Block b)
+	Declarations globals;
+	Functions functions;
+	
+	public Program(Declarations globals, Functions functions)
 	{
-		decpart = d;
-		body = b;
+		this.globals = globals;
+		this.functions = functions;
+	}
+	
+	// 에러를 막기 위한 더미 코드
+	public Program(Declarations decpart, Block body)
+	{
+		this.decpart = decpart;
+		this.body = body;
 	}
 	
 	void display()
@@ -26,8 +37,9 @@ class Program
 		// -> 뭔가 토큰이 제대로 입력이 안된 것.
 		try
 		{
-			decpart.display(1);
-			body.display(1);
+			Display.print(1, "Globals: ");
+			globals.display(2);
+			functions.display(1);
 		}
 		catch (NullPointerException e)
 		{
@@ -92,7 +104,6 @@ class Declarations extends ArrayList<Declaration>
 	// 화면에 출력.
 	public void display(int indent)
 	{
-		Display.print(indent, "Declarations: ");
 		String output = "{";
 		
 		// 변수 iteration
@@ -101,7 +112,7 @@ class Declarations extends ArrayList<Declaration>
 			output += "<" + d.v + ", " + d.t + ">, ";
 		}
 		
-		Display.print(indent + 1, "Declarations = " + output.substring(0, Math.max(output.length() - 2, 1)) + "}");
+		Display.print(indent, output.substring(0, Math.max(output.length() - 2, 1)) + "}");
 	}
 	// Declarations = Declaration*
 	// (a list of declarations d1, d2, ..., dn)

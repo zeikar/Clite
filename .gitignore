@@ -2,41 +2,41 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/**/usage.statistics.xml
-.idea/**/dictionaries
-.idea/**/shelf
+Clite/.idea/**/workspace.xml
+Clite/.idea/**/tasks.xml
+Clite/.idea/**/usage.statistics.xml
+Clite/.idea/**/dictionaries
+Clite/.idea/**/shelf
 
 # Generated files
-.idea/**/contentModel.xml
+Clite/.idea/**/contentModel.xml
 
 # Sensitive or high-churn files
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.local.xml
-.idea/**/sqlDataSources.xml
-.idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
-.idea/**/dbnavigator.xml
+Clite/.idea/**/dataSources/
+Clite/.idea/**/dataSources.ids
+Clite/.idea/**/dataSources.local.xml
+Clite/.idea/**/sqlDataSources.xml
+Clite/.idea/**/dynamic.xml
+Clite/.idea/**/uiDesigner.xml
+Clite/.idea/**/dbnavigator.xml
 
 # Gradle
-.idea/**/gradle.xml
-.idea/**/libraries
+Clite/.idea/**/gradle.xml
+Clite/.idea/**/libraries
 
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
-# .idea/modules.xml
-# .idea/*.iml
-# .idea/modules
+# Clite/.idea/modules.xml
+# Clite/.idea/*.iml
+# Clite/.idea/modules
 
 # CMake
 cmake-build-*/
 
 # Mongo Explorer plugin
-.idea/**/mongoSettings.xml
+Clite/.idea/**/mongoSettings.xml
 
 # File-based project format
 *.iws
@@ -45,13 +45,13 @@ cmake-build-*/
 out/
 
 # mpeltonen/sbt-idea plugin
-.idea_modules/
+Clite/.idea_modules/
 
 # JIRA plugin
 atlassian-ide-plugin.xml
 
 # Cursive Clojure plugin
-.idea/replstate.xml
+Clite/.idea/replstate.xml
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
@@ -60,8 +60,8 @@ crashlytics-build.properties
 fabric.properties
 
 # Editor-based Rest Client
-.idea/httpRequests
+Clite/.idea/httpRequests
 
 # Android studio 3.1+ serialized cache file
-.idea/caches/build_file_checksums.ser
+Clite/.idea/caches/build_file_checksums.ser
 Clite/.idea/workspace.xml

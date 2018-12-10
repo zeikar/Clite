@@ -316,7 +316,7 @@ public class Lexer
 	{
 		// 렉서 스타트.
 		//Lexer lexer = new Lexer(argv[0]);
-		Lexer lexer = new Lexer("../Test Programs/functions.cpp");
+		Lexer lexer = new Lexer("../Test Programs/fib.cpp");
 		
 		// 다음 토큰 읽기.
 		Token tok = lexer.next();

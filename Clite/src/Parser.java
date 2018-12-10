@@ -302,12 +302,12 @@ public class Parser
 			match(TokenType.Identifier);
 			
 			// Assignment
-			if(token.type().equals(TokenType.Assign))
+			if (token.type().equals(TokenType.Assign))
 			{
 				s = assignment(identifier);
 			}
 			// CallStatement
-			else if(token.type().equals(TokenType.LeftParen))
+			else if (token.type().equals(TokenType.LeftParen))
 			{
 				Call c = callStatement(identifier);
 				match(TokenType.Semicolon);
@@ -325,7 +325,7 @@ public class Parser
 			s = whileStatement();
 		}
 		// ReturnStatement
-		else if(token.type().equals(TokenType.Return))
+		else if (token.type().equals(TokenType.Return))
 		{
 			s = returnStatement();
 		}

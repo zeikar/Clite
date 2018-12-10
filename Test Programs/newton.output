@@ -1,0 +1,89 @@
+Begin parsing... programs/newton.cpp
+
+Program (abstract syntax): 
+  globals: 
+    {}
+  Functions: 
+    Function = main; Return type = int
+      params = 
+        {}
+      locals = 
+        {<a, float>, <x, float>, <result, float>}
+      Block: 
+        Assignment: 
+          Variable: a
+          Value: 4.0
+        Assignment: 
+          Variable: x
+          Value: 1.0
+        Loop: 
+          Binary: 
+            Operator: ||
+            Binary: 
+              Operator: >
+              Binary: 
+                Operator: *
+                Variable: x
+                Variable: x
+              Binary: 
+                Operator: +
+                Variable: a
+                Value: 1.0E-4
+            Binary: 
+              Operator: <
+              Binary: 
+                Operator: *
+                Variable: x
+                Variable: x
+              Binary: 
+                Operator: -
+                Variable: a
+                Value: 1.0E-4
+          Assignment: 
+            Variable: x
+            Binary: 
+              Operator: /
+              Binary: 
+                Operator: +
+                Variable: x
+                Binary: 
+                  Operator: /
+                  Variable: a
+                  Variable: x
+              Value: 2.0
+        Assignment: 
+          Variable: result
+          Variable: x
+
+
+Begin type checking...programs/newton.cpp
+Globals = {}
+Function main = 
+{    <result, float>, 
+   <x, float>, 
+   <main, int, {}>, 
+   <a, float> }
+
+No type errors
+
+Begin interpreting...programs/newton.cpp
+
+Entering main:
+   Globals and top frame:
+    ----------
+    <a, undefined>
+    <x, undefined>
+    <result, undefined>
+    ----------
+Leaving main:
+   Globals and top frame:
+    ----------
+    <a, 4.0>
+    <x, 2.0>
+    <result, 2.0>
+    ----------
+
+Final State
+   Globals and top frame:
+    ----------
+    ----------

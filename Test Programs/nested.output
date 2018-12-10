@@ -1,0 +1,74 @@
+Begin parsing... programs/nested.cpp
+
+Program (abstract syntax): 
+  globals: 
+    {}
+  Functions: 
+    Function = main; Return type = int
+      params = 
+        {}
+      locals = 
+        {<a, float>, <b, float>, <c, float>, <d, float>}
+      Block: 
+        Assignment: 
+          Variable: a
+          Value: 5.0
+        Assignment: 
+          Variable: b
+          Value: 4.5
+        Assignment: 
+          Variable: c
+          Value: 3.3
+        Assignment: 
+          Variable: d
+          Value: 2.2
+        Assignment: 
+          Variable: a
+          Binary: 
+            Operator: +
+            Binary: 
+              Operator: *
+              Variable: b
+              Unary: 
+                Operator: float
+                Value: 1
+            Binary: 
+              Operator: -
+              Variable: c
+              Variable: d
+
+
+Begin type checking...programs/nested.cpp
+Globals = {}
+Function main = 
+{    <b, float>, 
+   <main, int, {}>, 
+   <a, float>, 
+   <d, float>, 
+   <c, float> }
+
+No type errors
+
+Begin interpreting...programs/nested.cpp
+
+Entering main:
+   Globals and top frame:
+    ----------
+    <a, undefined>
+    <b, undefined>
+    <c, undefined>
+    <d, undefined>
+    ----------
+Leaving main:
+   Globals and top frame:
+    ----------
+    <a, 5.6>
+    <b, 4.5>
+    <c, 3.3>
+    <d, 2.2>
+    ----------
+
+Final State
+   Globals and top frame:
+    ----------
+    ----------

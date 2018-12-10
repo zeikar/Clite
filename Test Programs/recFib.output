@@ -1,0 +1,885 @@
+Begin parsing... programs/recFib.cpp
+
+Program (abstract syntax): 
+  globals: 
+    {}
+  Functions: 
+    Function = fibonacci; Return type = int
+      params = 
+        {<n, int>}
+      locals = 
+        {}
+      Block: 
+        Conditional: 
+          Binary: 
+            Operator: <
+            Variable: n
+            Value: 2
+          Return: 
+            Variable: fibonacci
+            Variable: n
+          Return: 
+            Variable: fibonacci
+            Binary: 
+              Operator: +
+              Call: fibonacci
+                args = 
+                  Binary: 
+                    Operator: -
+                    Variable: n
+                    Value: 1
+              Call: fibonacci
+                args = 
+                  Binary: 
+                    Operator: -
+                    Variable: n
+                    Value: 2
+
+    Function = main; Return type = int
+      params = 
+        {}
+      locals = 
+        {<answer, int>}
+      Block: 
+        Assignment: 
+          Variable: answer
+          Call: fibonacci
+            args = 
+              Value: 8
+
+
+Begin type checking...programs/recFib.cpp
+Globals = {}
+Function fibonacci = 
+{    <main, int, {}>, 
+   <fibonacci, int, {<n, int>}>, 
+   <n, int> }
+
+Function main = 
+{    <main, int, {}>, 
+   <fibonacci, int, {<n, int>}>, 
+   <answer, int> }
+
+No type errors
+
+Begin interpreting...programs/recFib.cpp
+
+Entering main:
+   Globals and top frame:
+    ----------
+    <answer, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 8>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 7>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 6>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 5>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, 2>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, 3>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, 2>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 5>
+    <fibonacci, 5>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, 2>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, 3>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 6>
+    <fibonacci, 8>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 5>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, 2>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, 3>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, 2>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 5>
+    <fibonacci, 5>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 7>
+    <fibonacci, 13>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 6>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 5>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, 2>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, 3>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, 2>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 5>
+    <fibonacci, 5>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 3>
+    <fibonacci, 2>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 1>
+    <fibonacci, 1>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 0>
+    <fibonacci, 0>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 2>
+    <fibonacci, 1>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 4>
+    <fibonacci, 3>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 6>
+    <fibonacci, 8>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 8>
+    <fibonacci, 21>
+    ----------
+Leaving main:
+   Globals and top frame:
+    ----------
+    <answer, 21>
+    ----------
+
+Final State
+   Globals and top frame:
+    ----------
+    ----------

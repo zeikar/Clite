@@ -1,0 +1,54 @@
+Begin parsing... programs/cast.cpp
+
+Program (abstract syntax): 
+  globals: 
+    {}
+  Functions: 
+    Function = main; Return type = int
+      params = 
+        {}
+      locals = 
+        {<c, int>, <b, float>}
+      Block: 
+        Assignment: 
+          Variable: c
+          Value: 1
+        Assignment: 
+          Variable: b
+          Unary: 
+            Operator: -
+            Unary: 
+              Operator: float
+              Variable: c
+
+
+Begin type checking...programs/cast.cpp
+
+Type map:
+Globals = {}
+Function main = 
+{    <b, float>, 
+   <main, int, {}>, 
+   <c, int> }
+
+No type errors
+
+Begin interpreting...programs/cast.cpp
+
+Entering main:
+   Globals and top frame:
+    ----------
+    <c, undefined>
+    <b, undefined>
+    ----------
+Leaving main:
+   Globals and top frame:
+    ----------
+    <c, 1>
+    <b, -1.0>
+    ----------
+
+Final State
+   Globals and top frame:
+    ----------
+    ----------

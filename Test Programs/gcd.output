@@ -1,0 +1,223 @@
+Begin parsing... programs/gcd.cpp
+
+Program (abstract syntax): 
+  globals: 
+    {}
+  Functions: 
+    Function = rem; Return type = int
+      params = 
+        {<x, int>, <y, int>}
+      locals = 
+        {}
+      Block: 
+        Return: 
+          Variable: rem
+          Binary: 
+            Operator: -
+            Variable: x
+            Binary: 
+              Operator: *
+              Binary: 
+                Operator: /
+                Variable: x
+                Variable: y
+              Variable: y
+
+    Function = gcd; Return type = int
+      params = 
+        {<x, int>, <y, int>}
+      locals = 
+        {<z, int>}
+      Block: 
+        Conditional: 
+          Binary: 
+            Operator: ==
+            Variable: y
+            Value: 0
+          Return: 
+            Variable: gcd
+            Variable: x
+          Conditional: 
+            Binary: 
+              Operator: ==
+              Variable: x
+              Value: 0
+            Return: 
+              Variable: gcd
+              Variable: y
+            Block: 
+              Assignment: 
+                Variable: z
+                Call: rem
+                  args = 
+                    Variable: x
+                    Variable: y
+              Return: 
+                Variable: gcd
+                Call: gcd
+                  args = 
+                    Variable: y
+                    Variable: z
+
+    Function = main; Return type = int
+      params = 
+        {}
+      locals = 
+        {<answer, int>}
+      Block: 
+        Assignment: 
+          Variable: answer
+          Call: gcd
+            args = 
+              Value: 24
+              Value: 10
+
+
+Begin type checking...programs/gcd.cpp
+Globals = {}
+Function rem = 
+{    <x, int>, 
+   <main, int, {}>, 
+   <gcd, int, {<x, int>, <y, int>}>, 
+   <y, int>, 
+   <rem, int, {<x, int>, <y, int>}> }
+
+Function gcd = 
+{    <x, int>, 
+   <main, int, {}>, 
+   <gcd, int, {<x, int>, <y, int>}>, 
+   <z, int>, 
+   <y, int>, 
+   <rem, int, {<x, int>, <y, int>}> }
+
+Function main = 
+{    <main, int, {}>, 
+   <gcd, int, {<x, int>, <y, int>}>, 
+   <answer, int>, 
+   <rem, int, {<x, int>, <y, int>}> }
+
+No type errors
+
+Begin interpreting...programs/gcd.cpp
+
+Entering main:
+   Globals and top frame:
+    ----------
+    <answer, undefined>
+    ----------
+Calling gcd
+   Globals and top frame:
+    ----------
+    <x, 24>
+    <y, 10>
+    <z, undefined>
+    <gcd, undefined>
+    ----------
+Calling rem
+   Globals and top frame:
+    ----------
+    <x, 24>
+    <y, 10>
+    <rem, undefined>
+    ----------
+Returning rem
+   Globals and top frame:
+    ----------
+    <x, 24>
+    <y, 10>
+    <rem, 4>
+    ----------
+Calling gcd
+   Globals and top frame:
+    ----------
+    <x, 10>
+    <y, 4>
+    <z, undefined>
+    <gcd, undefined>
+    ----------
+Calling rem
+   Globals and top frame:
+    ----------
+    <x, 10>
+    <y, 4>
+    <rem, undefined>
+    ----------
+Returning rem
+   Globals and top frame:
+    ----------
+    <x, 10>
+    <y, 4>
+    <rem, 2>
+    ----------
+Calling gcd
+   Globals and top frame:
+    ----------
+    <x, 4>
+    <y, 2>
+    <z, undefined>
+    <gcd, undefined>
+    ----------
+Calling rem
+   Globals and top frame:
+    ----------
+    <x, 4>
+    <y, 2>
+    <rem, undefined>
+    ----------
+Returning rem
+   Globals and top frame:
+    ----------
+    <x, 4>
+    <y, 2>
+    <rem, 0>
+    ----------
+Calling gcd
+   Globals and top frame:
+    ----------
+    <x, 2>
+    <y, 0>
+    <z, undefined>
+    <gcd, undefined>
+    ----------
+Returning gcd
+   Globals and top frame:
+    ----------
+    <x, 2>
+    <y, 0>
+    <z, undefined>
+    <gcd, 2>
+    ----------
+Returning gcd
+   Globals and top frame:
+    ----------
+    <x, 4>
+    <y, 2>
+    <z, 0>
+    <gcd, 2>
+    ----------
+Returning gcd
+   Globals and top frame:
+    ----------
+    <x, 10>
+    <y, 4>
+    <z, 2>
+    <gcd, 2>
+    ----------
+Returning gcd
+   Globals and top frame:
+    ----------
+    <x, 24>
+    <y, 10>
+    <z, 4>
+    <gcd, 2>
+    ----------
+Leaving main:
+   Globals and top frame:
+    ----------
+    <answer, 2>
+    ----------
+
+Final State
+   Globals and top frame:
+    ----------
+    ----------

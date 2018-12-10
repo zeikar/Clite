@@ -1,0 +1,62 @@
+Begin parsing... programs/clone.cpp
+
+Program (abstract syntax): 
+  globals: 
+    {}
+  Functions: 
+    Function = main; Return type = int
+      params = 
+        {}
+      locals = 
+        {<a, int>, <b, int>, <c, int>, <d, int>}
+      Block: 
+        Assignment: 
+          Variable: b
+          Variable: a
+        Assignment: 
+          Variable: b
+          Value: 5
+        Assignment: 
+          Variable: d
+          Variable: c
+        Assignment: 
+          Variable: c
+          Value: 7
+
+
+Begin type checking...programs/clone.cpp
+
+Type map:
+Globals = {}
+Function main = 
+{    <b, int>, 
+   <main, int, {}>, 
+   <a, int>, 
+   <d, int>, 
+   <c, int> }
+
+No type errors
+
+Begin interpreting...programs/clone.cpp
+
+Entering main:
+   Globals and top frame:
+    ----------
+    <a, undefined>
+    <b, undefined>
+    <c, undefined>
+    <d, undefined>
+    ----------
+Leaving main:
+   Globals and top frame:
+    ----------
+    <a, undefined>
+    <b, 5>
+    <c, 7>
+    <d, undefined>
+    ----------
+
+Final State
+   Globals and top frame:
+    ----------
+    ----------

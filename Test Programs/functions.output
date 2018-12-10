@@ -1,0 +1,156 @@
+Begin parsing... programs/functions.cpp
+
+Program (abstract syntax): 
+  globals: 
+    {<h, int>, <i, int>}
+  Functions: 
+    Function = A; Return type = void
+      params = 
+        {<x, int>, <y, int>}
+      locals = 
+        {<i, bool>, <j, bool>}
+      Block: 
+        Call: B
+          args = 
+            Variable: h
+
+    Function = B; Return type = void
+      params = 
+        {<w, int>}
+      locals = 
+        {<j, int>, <k, int>}
+      Block: 
+        Assignment: 
+          Variable: i
+          Binary: 
+            Operator: *
+            Value: 2
+            Variable: w
+        Assignment: 
+          Variable: w
+          Binary: 
+            Operator: +
+            Variable: w
+            Value: 1
+
+    Function = main; Return type = int
+      params = 
+        {}
+      locals = 
+        {<a, int>, <b, int>}
+      Block: 
+        Assignment: 
+          Variable: h
+          Value: 5
+        Assignment: 
+          Variable: a
+          Value: 3
+        Assignment: 
+          Variable: b
+          Value: 2
+        Call: A
+          args = 
+            Variable: a
+            Variable: b
+
+
+Begin type checking...programs/functions.cpp
+Globals = {<h, int>, <i, int>}
+Function A = 
+{    <x, int>, 
+   <A, void, {<x, int>, <y, int>}>, 
+   <main, int, {}>, 
+   <j, bool>, 
+   <i, bool>, 
+   <h, int>, 
+   <y, int>, 
+   <B, void, {<w, int>}> }
+
+Function B = 
+{    <A, void, {<x, int>, <y, int>}>, 
+   <main, int, {}>, 
+   <w, int>, 
+   <k, int>, 
+   <j, int>, 
+   <i, int>, 
+   <h, int>, 
+   <B, void, {<w, int>}> }
+
+Function main = 
+{    <b, int>, 
+   <A, void, {<x, int>, <y, int>}>, 
+   <main, int, {}>, 
+   <a, int>, 
+   <i, int>, 
+   <h, int>, 
+   <B, void, {<w, int>}> }
+
+No type errors
+
+Begin interpreting...programs/functions.cpp
+
+Entering main:
+   Globals and top frame:
+    ----------
+    <h, undefined>
+    <i, undefined>
+    <a, undefined>
+    <b, undefined>
+    ----------
+Calling A
+   Globals and top frame:
+    ----------
+    <h, 5>
+    <i, undefined>
+    <x, 3>
+    <y, 2>
+    <i, undefined>
+    <j, undefined>
+    <A, undefined>
+    ----------
+Calling B
+   Globals and top frame:
+    ----------
+    <h, 5>
+    <i, undefined>
+    <w, 5>
+    <j, undefined>
+    <k, undefined>
+    <B, undefined>
+    ----------
+Returning B
+   Globals and top frame:
+    ----------
+    <h, 5>
+    <i, 10>
+    <w, 6>
+    <j, undefined>
+    <k, undefined>
+    <B, undefined>
+    ----------
+Returning A
+   Globals and top frame:
+    ----------
+    <h, 5>
+    <i, 10>
+    <x, 3>
+    <y, 2>
+    <i, undefined>
+    <j, undefined>
+    <A, undefined>
+    ----------
+Leaving main:
+   Globals and top frame:
+    ----------
+    <h, 5>
+    <i, 10>
+    <a, 3>
+    <b, 2>
+    ----------
+
+Final State
+   Globals and top frame:
+    ----------
+    <h, 5>
+    <i, 10>
+    ----------

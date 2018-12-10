@@ -1,0 +1,117 @@
+Begin parsing... programs/fib.cpp
+
+Program (abstract syntax): 
+  globals: 
+    {}
+  Functions: 
+    Function = fibonacci; Return type = int
+      params = 
+        {<n, int>}
+      locals = 
+        {<fib0, int>, <fib1, int>, <temp, int>, <k, int>}
+      Block: 
+        Assignment: 
+          Variable: fib0
+          Value: 0
+        Assignment: 
+          Variable: fib1
+          Value: 1
+        Assignment: 
+          Variable: k
+          Variable: n
+        Loop: 
+          Binary: 
+            Operator: >
+            Variable: k
+            Value: 0
+          Block: 
+            Assignment: 
+              Variable: temp
+              Variable: fib0
+            Assignment: 
+              Variable: fib0
+              Variable: fib1
+            Assignment: 
+              Variable: fib1
+              Binary: 
+                Operator: +
+                Variable: fib0
+                Variable: temp
+            Assignment: 
+              Variable: k
+              Binary: 
+                Operator: -
+                Variable: k
+                Value: 1
+        Return: 
+          Variable: fibonacci
+          Variable: fib0
+
+    Function = main; Return type = int
+      params = 
+        {}
+      locals = 
+        {<answer, int>}
+      Block: 
+        Assignment: 
+          Variable: answer
+          Call: fibonacci
+            args = 
+              Value: 8
+
+
+Begin type checking...programs/fib.cpp
+Globals = {}
+Function fibonacci = 
+{    <main, int, {}>, 
+   <k, int>, 
+   <temp, int>, 
+   <fib1, int>, 
+   <fibonacci, int, {<n, int>}>, 
+   <fib0, int>, 
+   <n, int> }
+
+Function main = 
+{    <main, int, {}>, 
+   <fibonacci, int, {<n, int>}>, 
+   <answer, int> }
+
+No type errors
+
+Begin interpreting...programs/fib.cpp
+
+Entering main:
+   Globals and top frame:
+    ----------
+    <answer, undefined>
+    ----------
+Calling fibonacci
+   Globals and top frame:
+    ----------
+    <n, 8>
+    <fib0, undefined>
+    <fib1, undefined>
+    <temp, undefined>
+    <k, undefined>
+    <fibonacci, undefined>
+    ----------
+Returning fibonacci
+   Globals and top frame:
+    ----------
+    <n, 8>
+    <fib0, 21>
+    <fib1, 34>
+    <temp, 13>
+    <k, 0>
+    <fibonacci, 21>
+    ----------
+Leaving main:
+   Globals and top frame:
+    ----------
+    <answer, 21>
+    ----------
+
+Final State
+   Globals and top frame:
+    ----------
+    ----------

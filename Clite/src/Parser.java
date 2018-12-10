@@ -57,7 +57,7 @@ public class Parser
 	// 메인
 	public Program program()
 	{
-		// Program --> void main ( ) '{' Declarations Statements '}'
+		// Program --> { Type Identifier FunctionOrGlobal } MainFunction
 		TokenType[] header = {TokenType.Int, TokenType.Main,
 				TokenType.LeftParen, TokenType.RightParen};
 		
@@ -598,7 +598,7 @@ public class Parser
 	public static void main(String args[])
 	{
 		//Parser parser  = new Parser(new Lexer(args[0]));
-		String fileName = "../Test Programs/functions.cpp";
+		String fileName = "../Test Programs/nested.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		Display.print(0, "Begin parsing... " + fileName + "\n");
 		Program prog = parser.program();

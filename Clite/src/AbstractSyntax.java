@@ -37,6 +37,56 @@ class Program
 	
 }
 
+// 함수들
+class Functions extends ArrayList<Function>
+{
+	// Functions = Function*
+	// 화면에 출력.
+	public void display(int indent)
+	{
+		Display.print(indent, "Functions: ");
+		
+		// 함수 iteration
+		for (Function function : this)
+		{
+			function.display(indent + 1);
+		}
+	}
+}
+
+// 함수
+class Function
+{
+	// Function = Type t; String id, Declarations params, locals, Block body
+	// 함수의 리턴 타입
+	Type t;
+	String id;
+	Declarations params, locals;
+	Block body;
+	
+	public Function(Type t, String id, Declarations params, Declarations locals, Block body)
+	{
+		this.t = t;
+		this.id = id;
+		this.params = params;
+		this.locals = locals;
+		this.body = body;
+	}
+	
+	public void display(int indent)
+	{
+		Display.print(indent, "Function = " + id + "; Return Type = " + t.toString());
+		
+		Display.print(indent + 1, "params = ");
+		params.display(indent + 2);
+		
+		Display.print(indent + 1, "locals = ");
+		locals.display(indent + 2);
+		
+		body.display(indent + 1);
+	}
+}
+
 class Declarations extends ArrayList<Declaration>
 {
 	// 화면에 출력.
@@ -95,14 +145,14 @@ class Type
 	}
 }
 
-abstract class Statement
+interface Statement
 {
-	public abstract void display(int indent);
-	// Statement = Skip | Block | Assignment | Conditional | Loop
+	void display(int indent);
+	// Statement = Skip | Block | Assignment | Conditional | Loop | Call | Return
 	
 }
 
-class Skip extends Statement
+class Skip implements Statement
 {
 	@Override
 	public void display(int indent)
@@ -111,7 +161,7 @@ class Skip extends Statement
 	}
 }
 
-class Block extends Statement
+class Block implements Statement
 {
 	// Block = Statement*
 	//         (a Vector of members)
@@ -129,7 +179,7 @@ class Block extends Statement
 	}
 }
 
-class Assignment extends Statement
+class Assignment implements Statement
 {
 	// Assignment = Variable target; Expression source
 	Variable target;
@@ -151,7 +201,7 @@ class Assignment extends Statement
 	}
 }
 
-class Conditional extends Statement
+class Conditional implements Statement
 {
 	// Conditional = Expression test; Statement thenbranch, elsebranch
 	Expression test;
@@ -183,7 +233,7 @@ class Conditional extends Statement
 	}
 }
 
-class Loop extends Statement
+class Loop implements Statement
 {
 	// Loop = Expression test; Statement body
 	Expression test;
@@ -204,14 +254,65 @@ class Loop extends Statement
 	}
 }
 
-abstract class Expression
+// Call
+class Call implements Statement, Expression
 {
-	public abstract void display(int indent);
+	// Call = String name; Expressions args
+	String name;
+	ArrayList<Expression> args = new ArrayList<>();
+	
+	@Override
+	public void display(int indent)
+	{
+		Display.print(indent, "Call: " + name);
+		
+		Display.print(indent + 1, "args = ");
+		
+		// 순차적으로 출력
+		for (Expression expression : args)
+		{
+			expression.display(indent + 2);
+		}
+	}
+	
+	public Call(String name, ArrayList<Expression> args)
+	{
+		this.name = name;
+		this.args = args;
+	}
+}
+
+// Return
+class Return implements Statement
+{
+	// Return = Variable target; Expression result
+	Variable target;
+	Expression result;
+	
+	@Override
+	public void display(int indent)
+	{
+		Display.print(indent, "Return: ");
+		
+		target.display(indent + 1);
+		result.display(indent + 1);
+	}
+	
+	public Return(Variable target, Expression result)
+	{
+		this.target = target;
+		this.result = result;
+	}
+}
+
+interface Expression
+{
+	void display(int indent);
 	// Expression = Variable | Value | Binary | Unary
 	
 }
 
-class Variable extends Expression
+class Variable implements Expression
 {
 	// Variable = String id
 	private String id;
@@ -243,7 +344,7 @@ class Variable extends Expression
 	}
 }
 
-abstract class Value extends Expression
+abstract class Value implements Expression
 {
 	// Value = IntValue | BoolValue |
 	//         CharValue | FloatValue
@@ -464,7 +565,7 @@ class FloatValue extends Value
 	}
 }
 
-class Binary extends Expression
+class Binary implements Expression
 {
 	// Binary = Operator op; Expression term1, term2
 	Operator op;
@@ -488,7 +589,7 @@ class Binary extends Expression
 	}
 }
 
-class Unary extends Expression
+class Unary implements Expression
 {
 	// Unary = Operator op; Expression term
 	Operator op;

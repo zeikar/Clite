@@ -1,5 +1,5 @@
 public enum TokenType {
-     Bool, Char, Else, False, Float,
+     Bool, Char, Else, False, Float, Void,
      If, Int, Main, True, While,
      Eof, LeftBrace, RightBrace, LeftBracket, RightBracket,
      LeftParen, RightParen, Semicolon, Comma, Assign,

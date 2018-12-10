@@ -2,7 +2,6 @@ import java.io.*;
 
 public class Lexer
 {
-	
 	private boolean isEof = false;
 	private char ch = ' ';
 	private BufferedReader input;
@@ -128,7 +127,6 @@ public class Lexer
 						char ch1 = nextChar();
 						
 						
-						// 추가함 //////////////////////////////////////////////////////////////////////////////////////
 						// 만약 ' 이면 (없음) char 리터럴 타입이 아니다 -> 에러.
 						if (ch1 == '\'')
 						{
@@ -137,7 +135,6 @@ public class Lexer
 						
 						ch = nextChar(); // get '
 						
-						// 추가함 //////////////////////////////////////////////////////////////////////////////////////
 						// 만약 ' 가 아니면 (두 글자 이상) char 리터럴 타입이 아니다 -> 에러.
 						if (ch != '\'')
 						{
@@ -185,7 +182,6 @@ public class Lexer
 						ch = nextChar();
 						return Token.rightBraceTok;
 					
-					// 추가함 //////////////////////////////////////////////////////////////////////////////////////
 					// [
 					case '[':
 						ch = nextChar();
@@ -320,7 +316,7 @@ public class Lexer
 	{
 		// 렉서 스타트.
 		//Lexer lexer = new Lexer(argv[0]);
-		Lexer lexer = new Lexer("../Test Programs/error.cpp");
+		Lexer lexer = new Lexer("../Test Programs/functions.cpp");
 		
 		// 다음 토큰 읽기.
 		Token tok = lexer.next();

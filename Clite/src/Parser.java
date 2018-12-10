@@ -151,10 +151,15 @@ public class Parser
 		{
 			t = Type.CHAR;
 		}
+		// void
+		else if (token.type().equals(TokenType.Void))
+		{
+			t = Type.VOID;
+		}
 		// 타입이 아님 -> 에러
 		else
 		{
-			error("Type ( int | bool | float | char )");
+			error("Type ( int | bool | float | char | void )");
 		}
 		token = lexer.next();
 		
@@ -223,7 +228,6 @@ public class Parser
 		return b;
 	}
 	
-	// 함수 추가 ///////////////////////////////////////////
 	// <<Statements>> 반환. ({} 없는 Block)
 	private Block statementsWithoutBrackets()
 	{
@@ -542,7 +546,8 @@ public class Parser
 		return token.type().equals(TokenType.Int)
 				|| token.type().equals(TokenType.Bool)
 				|| token.type().equals(TokenType.Float)
-				|| token.type().equals(TokenType.Char);
+				|| token.type().equals(TokenType.Char)
+				|| token.type().equals(TokenType.Void);
 	}
 	
 	// Literal 체크
@@ -562,7 +567,6 @@ public class Parser
 	}
 	
 	
-	//// 함수 추가 /////////////
 	// , 인가
 	private boolean isComma()
 	{
@@ -594,7 +598,7 @@ public class Parser
 	public static void main(String args[])
 	{
 		//Parser parser  = new Parser(new Lexer(args[0]));
-		String fileName = "../Test Programs/error.cpp";
+		String fileName = "../Test Programs/functions.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		Display.print(0, "Begin parsing... " + fileName + "\n");
 		Program prog = parser.program();

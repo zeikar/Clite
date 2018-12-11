@@ -8,10 +8,6 @@ class Program
 {
 	// Program = Declarations decpart ; Block body
 	// <<Declarations>>  <<Statements>>
-	// 에러를 막기 위한 더미 코드
-	Declarations decpart;
-	Block body;
-	
 	Declarations globals;
 	Functions functions;
 	
@@ -19,13 +15,6 @@ class Program
 	{
 		this.globals = globals;
 		this.functions = functions;
-	}
-	
-	// 에러를 막기 위한 더미 코드
-	public Program(Declarations decpart, Block body)
-	{
-		this.decpart = decpart;
-		this.body = body;
 	}
 	
 	void display()

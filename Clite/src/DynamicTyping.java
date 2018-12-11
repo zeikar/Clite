@@ -9,7 +9,7 @@ public class DynamicTyping extends Semantics
 	// M 함수. 전체 프로그램의 M(Meaning) 반환.
 	State M(Program p)
 	{
-		return M(p.body, new State());
+		return M(p.functions.getFunction(Token.mainTok.value()).body, initialState(p.globals), p.functions);
 	}
 	
 	// Binary 연산자 적용.

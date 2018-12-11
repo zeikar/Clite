@@ -10,6 +10,10 @@ import java.util.*;
 public class StaticTypeCheck
 {
 	
+	// 현재 Validate 중인 함수에서 리턴을 했는가.
+	// 모든 실행 경로 판단.
+	private static boolean hasReturn;
+	
 	// Declarations 으로부터 맵 생성
 	public static TypeMap typing(Declarations d)
 	{
@@ -99,7 +103,7 @@ public class StaticTypeCheck
 	public static void V(Function function, TypeMap tm, Functions functions)
 	{
 		// 리턴 했는가
-		boolean hasReturn = false;
+		hasReturn = false;
 		
 		// 함수 body 내용 iterate
 		Iterator<Statement> it = function.body.members.iterator();
@@ -436,11 +440,20 @@ public class StaticTypeCheck
 		if (s instanceof Conditional)
 		{
 			Conditional c = (Conditional) s;
+			boolean ifReturn = false, elseReturn = false;
 			
 			// 조건문, then, else 각각을 V
 			V(c.test, tm, functions);
 			V(c.thenbranch, tm, functions);
+			ifReturn = hasReturn;
+			hasReturn = false;
+			
 			V(c.elsebranch, tm, functions);
+			elseReturn = hasReturn;
+			
+			// if와 else 둘 다에서 Return 하면 Return 한 것.
+			// 아니면 다음에 Return 이 나와야 함.
+			hasReturn = ifReturn && elseReturn;
 			
 			return;
 		}
@@ -453,6 +466,9 @@ public class StaticTypeCheck
 			V(l.test, tm, functions);
 			V(l.body, tm, functions);
 			
+			// 루프 밖에서도 Return 필요
+			hasReturn = false;
+			
 			return;
 		}
 		// Statement 형태로 함수 call
@@ -461,7 +477,7 @@ public class StaticTypeCheck
 		{
 			// Type Rule 10.6
 			// Statement 형태의 Call 은 void 만 가능.
-			Call call = (Call)s;
+			Call call = (Call) s;
 			Function function = functions.getFunction(call.name);
 			check(function.t.equals(Type.VOID), "Call Statement must be a void type function!");
 			V((Call) s, tm, functions);
@@ -470,6 +486,9 @@ public class StaticTypeCheck
 		// Return
 		if (s instanceof Return)
 		{
+			// Return
+			hasReturn = true;
+			
 			Return r = (Return) s;
 			Function f = functions.getFunction(r.target.toString());
 			Type t = typeOf(r.result, tm, functions);
@@ -484,7 +503,7 @@ public class StaticTypeCheck
 	{
 		//Parser parser  = new Parser(new Lexer(args[0]));
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/fib.cpp";
+		String fileName = "../Test Programs/recFib.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		
 		// 프로그램 파싱

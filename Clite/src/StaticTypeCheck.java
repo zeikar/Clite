@@ -53,12 +53,55 @@ public class StaticTypeCheck
 	// Declarations, body 부분 체크.
 	public static void V(Program p)
 	{
-		V(p.decpart);
-		V(p.body, typing(p.decpart));
+		//V(p.decpart);
+		//V(p.body, typing(p.decpart));
+		
+		// main 함수 있는지 체크
+		check(p.functions.getFunction("main") != null, "Error! Main function not found!");
+		
+		// Type Rule 10.1
+		// 전역 변수 및 함수 이름이 unique 인지 체크
+		Declarations globalAndFunctions = new Declarations();
+		globalAndFunctions.addAll(p.globals);
+		globalAndFunctions.addAll(p.functions.getAllFunctionNames());
+		V(globalAndFunctions);
+		
+		// 전체 프로그램 V
+		// -> 각 함수별로 체크
+		V(p.functions, typing(p.globals));
+	}
+	
+	// 각 함수 별로 Validate 체크
+	public static void V(Functions functions, TypeMap tm)
+	{
+		for(Function function : functions)
+		{
+			// 전역 변수, 파라미터, 로컬 변수의 TypeMap 생성 및 체크
+			TypeMap newMap = new TypeMap();
+			newMap.putAll(tm);
+			newMap.putAll(typing(function.params));
+			newMap.putAll(typing(function.locals));
+			
+			// Type Rule 10.2
+			// 중복 체크
+			Declarations localsAndParams = new Declarations();
+			localsAndParams.addAll(function.locals);
+			localsAndParams.addAll(function.params);
+			V(localsAndParams);
+			
+			// 함수 내부 V
+			V(function, newMap, functions);
+		}
+	}
+	
+	// 함수 하나의 V
+	public static void V(Function function, TypeMap newMap, Functions functions)
+	{
+	
 	}
 	
 	// Expression 의 타입을 tm(TypeMap)에서 가져온다.
-	public static Type typeOf(Expression e, TypeMap tm)
+	public static Type typeOf(Expression e, TypeMap tm, Functions functions)
 	{
 		// 값이면 그 값의 타입을 반환
 		if (e instanceof Value)
@@ -73,6 +116,13 @@ public class StaticTypeCheck
 			check(tm.containsKey(v), "undefined variable: " + v);
 			return (Type) tm.get(v);
 		}
+		// Call
+		if(e instanceof Call)
+		{
+			Call c = (Call) e;
+			Function f = functions.getFunction(c.name);
+			return f.t;
+		}
 		// Binary 연산자
 		if (e instanceof Binary)
 		{
@@ -80,7 +130,7 @@ public class StaticTypeCheck
 			// +, -, *, /
 			if (b.op.ArithmeticOp())
 			{
-				if (typeOf(b.term1, tm) == Type.FLOAT)
+				if (typeOf(b.term1, tm, functions) == Type.FLOAT)
 				{
 					return (Type.FLOAT);
 				}
@@ -107,7 +157,7 @@ public class StaticTypeCheck
 			// -
 			else if (u.op.NegateOp())
 			{
-				return typeOf(u.term, tm);
+				return typeOf(u.term, tm, functions);
 			}
 			// int 캐스팅
 			else if (u.op.intOp())
@@ -129,7 +179,7 @@ public class StaticTypeCheck
 	}
 	
 	// Expression 을 체크.
-	public static void V(Expression e, TypeMap tm)
+	public static void V(Expression e, TypeMap tm, Functions functions)
 	{
 		// Value. 체크할 것이 없음.
 		if (e instanceof Value)
@@ -148,12 +198,12 @@ public class StaticTypeCheck
 		if (e instanceof Binary)
 		{
 			Binary b = (Binary) e;
-			Type typ1 = typeOf(b.term1, tm);
-			Type typ2 = typeOf(b.term2, tm);
+			Type typ1 = typeOf(b.term1, tm, functions);
+			Type typ2 = typeOf(b.term2, tm, functions);
 			
 			// 각각을 체크
-			V(b.term1, tm);
-			V(b.term2, tm);
+			V(b.term1, tm, functions);
+			V(b.term2, tm, functions);
 			
 			// +, -, *, /
 			if (b.op.ArithmeticOp())
@@ -186,9 +236,9 @@ public class StaticTypeCheck
 		{
 			Unary u = (Unary) e;
 			
-			Type t = typeOf(u.term, tm);
+			Type t = typeOf(u.term, tm, functions);
 			
-			V(u.term, tm);
+			V(u.term, tm, functions);
 			
 			// ! 연산자
 			// 불 타입이어야 함.
@@ -235,7 +285,7 @@ public class StaticTypeCheck
 	}
 	
 	// Statement 검증
-	public static void V(Statement s, TypeMap tm)
+	public static void V(Statement s, TypeMap tm, Functions functions)
 	{
 		// null 이면 에러
 		if (s == null)
@@ -254,9 +304,9 @@ public class StaticTypeCheck
 			// 선언 되어있는지 체크
 			check(tm.containsKey(a.target)
 					, "undefined target in assignment: " + a.target);
-			V(a.source, tm);
+			V(a.source, tm, functions);
 			Type ttype = (Type) tm.get(a.target);
-			Type srctype = typeOf(a.source, tm);
+			Type srctype = typeOf(a.source, tm, functions);
 			
 			// target, source 서로 다를 경우
 			if (ttype != srctype)
@@ -292,7 +342,7 @@ public class StaticTypeCheck
 			// Block 내의 모든 Statement 검증
 			for (Statement statement : b.members)
 			{
-				V(statement, tm);
+				V(statement, tm, functions);
 			}
 			
 			return;
@@ -303,9 +353,9 @@ public class StaticTypeCheck
 			Conditional c = (Conditional) s;
 			
 			// 조건문, then, else 각각을 V
-			V(c.test, tm);
-			V(c.thenbranch, tm);
-			V(c.elsebranch, tm);
+			V(c.test, tm, functions);
+			V(c.thenbranch, tm, functions);
+			V(c.elsebranch, tm, functions);
 			
 			return;
 		}
@@ -315,8 +365,8 @@ public class StaticTypeCheck
 			Loop l = (Loop) s;
 			
 			// 조건문과 body 각각을 V
-			V(l.test, tm);
-			V(l.body, tm);
+			V(l.test, tm, functions);
+			V(l.body, tm, functions);
 			
 			return;
 		}
@@ -327,7 +377,7 @@ public class StaticTypeCheck
 	{
 		//Parser parser  = new Parser(new Lexer(args[0]));
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/clone.cpp";
+		String fileName = "../Test Programs/functions.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		
 		// 프로그램 파싱
@@ -336,9 +386,10 @@ public class StaticTypeCheck
 		
 		// Type Map 출력, 타입 체킹.
 		System.out.println("\nBegin type checking...");
-		System.out.println("Type map:");
-		TypeMap map = typing(prog.decpart);
+		System.out.println("Globals = ");
+		TypeMap map = typing(prog.globals);
 		map.display();   // student exercise
+		
 		V(prog);
 	} //main
 	

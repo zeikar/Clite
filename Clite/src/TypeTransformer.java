@@ -13,12 +13,12 @@ public class TypeTransformer
 	// 전체 프로그램 Transform
 	public static Program T(Program p, TypeMap tm)
 	{
-		Block body = (Block) T(p.body, tm);
+		Block body = (Block) T(p.body, tm, p.functions);
 		return new Program(p.decpart, body);
 	}
 	
 	// Transform
-	public static Expression T(Expression e, TypeMap tm)
+	public static Expression T(Expression e, TypeMap tm, Functions functions)
 	{
 		// 값은 그대로
 		if (e instanceof Value)
@@ -34,10 +34,10 @@ public class TypeTransformer
 		if (e instanceof Binary)
 		{
 			Binary b = (Binary) e;
-			Type typ1 = StaticTypeCheck.typeOf(b.term1, tm);
-			Type typ2 = StaticTypeCheck.typeOf(b.term2, tm);
-			Expression t1 = T(b.term1, tm);
-			Expression t2 = T(b.term2, tm);
+			Type typ1 = StaticTypeCheck.typeOf(b.term1, tm, functions);
+			Type typ2 = StaticTypeCheck.typeOf(b.term2, tm, functions);
+			Expression t1 = T(b.term1, tm, functions);
+			Expression t2 = T(b.term2, tm, functions);
 			
 			// 타입에 따라 다른 연산자 매핑.
 			if (typ1 == Type.INT)
@@ -66,8 +66,8 @@ public class TypeTransformer
 		if (e instanceof Unary)
 		{
 			Unary u = (Unary) e;
-			Type type = StaticTypeCheck.typeOf(u.term, tm);
-			Expression t = T(u.term, tm);
+			Type type = StaticTypeCheck.typeOf(u.term, tm, functions);
+			Expression t = T(u.term, tm, functions);
 			
 			// 타입에 따라 다른 연산자 매핑
 			if (type == Type.BOOL)
@@ -98,7 +98,7 @@ public class TypeTransformer
 	}
 	
 	// Transform
-	public static Statement T(Statement s, TypeMap tm)
+	public static Statement T(Statement s, TypeMap tm, Functions functions)
 	{
 		// Skip 은 안함.
 		if (s instanceof Skip)
@@ -111,9 +111,9 @@ public class TypeTransformer
 			Assignment a = (Assignment) s;
 			
 			Variable target = a.target;
-			Expression src = T(a.source, tm);
+			Expression src = T(a.source, tm, functions);
 			Type ttype = (Type) tm.get(a.target);
-			Type srctype = StaticTypeCheck.typeOf(a.source, tm);
+			Type srctype = StaticTypeCheck.typeOf(a.source, tm, functions);
 			
 			// src 가 INT 이면 int to float 삽입.
 			if (ttype == Type.FLOAT)
@@ -141,9 +141,9 @@ public class TypeTransformer
 		if (s instanceof Conditional)
 		{
 			Conditional c = (Conditional) s;
-			Expression test = T(c.test, tm);
-			Statement tbr = T(c.thenbranch, tm);
-			Statement ebr = T(c.elsebranch, tm);
+			Expression test = T(c.test, tm, functions);
+			Statement tbr = T(c.thenbranch, tm, functions);
+			Statement ebr = T(c.elsebranch, tm, functions);
 			
 			return new Conditional(test, tbr, ebr);
 		}
@@ -151,8 +151,8 @@ public class TypeTransformer
 		if (s instanceof Loop)
 		{
 			Loop l = (Loop) s;
-			Expression test = T(l.test, tm);
-			Statement body = T(l.body, tm);
+			Expression test = T(l.test, tm, functions);
+			Statement body = T(l.body, tm, functions);
 			
 			return new Loop(test, body);
 		}
@@ -163,7 +163,7 @@ public class TypeTransformer
 			Block out = new Block();
 			for (Statement stmt : b.members)
 			{
-				out.members.add(T(stmt, tm));
+				out.members.add(T(stmt, tm, functions));
 			}
 			return out;
 		}

@@ -53,6 +53,35 @@ class Program
 class Functions extends ArrayList<Function>
 {
 	// Functions = Function*
+	
+	// 해당 이름의 Function  반환
+	public Function getFunction(String name)
+	{
+		// 함수 iteration
+		for (Function function : this)
+		{
+			if(function.id.equals(name))
+			{
+				return function;
+			}
+		}
+		return null;
+	}
+	
+	// 모든 함수의 이름들(Declarations) 반환.
+	public Declarations getAllFunctionNames()
+	{
+		Declarations declarations = new Declarations();
+		
+		// 함수 iteration
+		for (Function function : this)
+		{
+			declarations.add(new Declaration(new Variable(function.id), function.t));
+		}
+		
+		return declarations;
+	}
+	
 	// 화면에 출력.
 	public void display(int indent)
 	{

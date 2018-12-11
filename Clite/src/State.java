@@ -24,13 +24,14 @@ public class State extends HashMap<Variable, Value> {
 	
 	public void display()
 	{
-		String output = "{ ";
+		Display.print(1,"Globals and top frame:");
+		Display.print(1,"---------------------------------------");
 		
 		// 출력
 		for (Map.Entry<Variable, Value> entry : entrySet()) {
-			output += "<" + entry.getKey() + ", " + entry.getValue() + ">, ";
+			Display.print(2, "<" + entry.getKey() + ", " + entry.getValue() + ">");
 		}
 		
-		Display.print(0,output.substring(0, Math.max(output.length() - 2, 1)) + " }");
+		Display.print(1,"---------------------------------------");
 	}
 }

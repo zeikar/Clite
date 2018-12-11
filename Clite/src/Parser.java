@@ -114,6 +114,8 @@ public class Parser
 		}
 		else
 		{
+			// 추가
+			globals.add(new Declaration(v, t));
 			// Global
 			Global(t, globals);
 		}

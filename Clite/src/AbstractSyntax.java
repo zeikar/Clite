@@ -802,6 +802,7 @@ class Operator
 	final static String boolMap[][] = {
 			{EQ, BOOL_EQ}, {NE, BOOL_NE}, {LT, BOOL_LT},
 			{LE, BOOL_LE}, {GT, BOOL_GT}, {GE, BOOL_GE},
+			{AND, AND}, {OR, OR}
 	};
 	
 	final static private Operator map(String[][] tmap, String op)

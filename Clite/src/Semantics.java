@@ -150,8 +150,8 @@ public class Semantics
 		{
 			Call call = (Call) s;
 			// 함수 이름 State 제거
-			state = M(call, (State) globalState.clone(), functions);
-			state.remove(((Call) s).name);
+			state = M(call, state, functions);
+			state.remove(new Variable(call.name));
 			return state;
 		}
 		throw new IllegalArgumentException("should never reach here");
@@ -425,7 +425,7 @@ public class Semantics
 		{
 			Call c = (Call) e;
 			// Call 함수 실행
-			state = M(c, (State) globalState.clone(), functions);
+			state = M(c, state, functions);
 			// 리턴 받고 삭제
 			Value returnValue = state.get(new Variable(c.name));
 			state.remove(new Variable(c.name));
@@ -438,7 +438,7 @@ public class Semantics
 	{
 		// Parser parser  = new Parser(new Lexer(args[0]));
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/fib.cpp";
+		String fileName = "../Test Programs/functions.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		
 		Program prog = parser.program();

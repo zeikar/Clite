@@ -133,19 +133,24 @@ class Declarations extends ArrayList<Declaration>
 	// 화면에 출력.
 	public void display(int indent)
 	{
+		Display.print(indent, toString());
+	}
+	// Declarations = Declaration*
+	// (a list of declarations d1, d2, ..., dn)
+	
+	
+	// 문자열로 출력
+	public String toString()
+	{
 		String output = "{";
-		
 		// 변수 iteration
 		for (Declaration d : this)
 		{
 			output += "<" + d.v + ", " + d.t + ">, ";
 		}
 		
-		Display.print(indent, output.substring(0, Math.max(output.length() - 2, 1)) + "}");
+		return output.substring(0, Math.max(output.length() - 2, 1)) + "}";
 	}
-	// Declarations = Declaration*
-	// (a list of declarations d1, d2, ..., dn)
-	
 }
 
 class Declaration

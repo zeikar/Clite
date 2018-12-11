@@ -9,10 +9,11 @@ import java.util.*;
 
 public class StaticTypeCheck
 {
-	
 	// 현재 Validate 중인 함수에서 리턴을 했는가.
 	// 모든 실행 경로 판단.
 	private static boolean hasReturn;
+	// 에러가 한 번이라도 발생했는가.
+	private static boolean hasTypeError;
 	
 	// Declarations 으로부터 맵 생성
 	public static TypeMap typing(Declarations d)
@@ -32,9 +33,9 @@ public class StaticTypeCheck
 		{
 			return;
 		}
+		hasTypeError = true;
 		System.err.println(msg);
-		// 추가 구현 과제!!!!!!!!
-		// 바로 종료 안함.
+		// 에러 출력 후 바로 종료 안함.
 		//System.exit(1);
 	}
 	
@@ -102,6 +103,10 @@ public class StaticTypeCheck
 	// 함수 하나의 V
 	public static void V(Function function, TypeMap tm, Functions functions)
 	{
+		// TypeMap 출력
+		System.out.println("Function " + function.id + " = ");
+		tm.display(functions);
+		
 		// 리턴 했는가
 		hasReturn = false;
 		
@@ -503,7 +508,7 @@ public class StaticTypeCheck
 	{
 		//Parser parser  = new Parser(new Lexer(args[0]));
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/recFib.cpp";
+		String fileName = "../Test Programs/fib.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		
 		// 프로그램 파싱
@@ -514,9 +519,14 @@ public class StaticTypeCheck
 		System.out.println("\nBegin type checking...");
 		System.out.println("Globals = ");
 		TypeMap map = typing(prog.globals);
-		map.display();   // student exercise
+		map.display();
 		
 		V(prog);
+		
+		if(!hasTypeError)
+		{
+			System.out.println("No type errors :P");
+		}
 	} //main
 	
 } // class StaticTypeCheck

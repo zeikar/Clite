@@ -162,7 +162,7 @@ public class StaticTypeCheck
 		{
 			Declaration dec = funcIt.next();
 			
-			// make sure there's more arguments in the call
+			// 파라미터 개수와 매개변수 개수 체크
 			check(callIt.hasNext(), "Incorrect number of arguments for function call " + call.name);
 			// 없으면 종료
 			if (!callIt.hasNext())
@@ -172,12 +172,12 @@ public class StaticTypeCheck
 			
 			Expression exp = callIt.next();
 			
-			// get the type of the expression and check if it's the same as the parameter type
+			// 파라미터 타입과 비교
 			Type expType = typeOf(exp, tm, functions);
 			check(dec.t == expType, "Wrong type in parameter for " + dec.v + " of function " + call.name + " (got a " + expType + ", expected a " + dec.t + ")");
 		}
 		
-		// given too many arguments
+		// 파라미터 개수와 매개변수 개수 체크
 		check(!callIt.hasNext(), "Incorrect number of arguments for function call " + call.name);
 	}
 	

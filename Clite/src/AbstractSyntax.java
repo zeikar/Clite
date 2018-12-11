@@ -437,6 +437,10 @@ abstract class Value implements Expression
 		{
 			return new FloatValue();
 		}
+		if (type == Type.VOID)
+		{
+			return new VoidValue();
+		}
 		throw new IllegalArgumentException("Illegal type in mkValue");
 	}
 }
@@ -596,6 +600,44 @@ class FloatValue extends Value
 	public void display(int indent)
 	{
 		Display.print(indent, "FloatValue: " + value);
+	}
+}
+
+class VoidValue extends Value
+{
+	private float value = 0;
+	
+	VoidValue()
+	{
+		type = Type.VOID;
+	}
+	
+	VoidValue(float v)
+	{
+		this();
+		value = v;
+		undef = false;
+	}
+	
+	float voidValue()
+	{
+		assert !undef : "reference to undefined void value";
+		return value;
+	}
+	
+	public String toString()
+	{
+		if (undef)
+		{
+			return "undef";
+		}
+		return "" + value;
+	}
+	
+	@Override
+	public void display(int indent)
+	{
+		Display.print(indent, "VoidValue: " + value);
 	}
 }
 

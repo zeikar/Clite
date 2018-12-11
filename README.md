@@ -1,2 +1,2 @@
 # Clite
-Clite Parser in Java (Programming Languages [CSE2024])
+Clite Parser / Interpreter in Java (Programming Languages [CSE2024])

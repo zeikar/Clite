@@ -74,8 +74,9 @@ public class StaticTypeCheck
 	// 각 함수 별로 Validate 체크
 	public static void V(Functions functions, TypeMap tm)
 	{
-		for(Function function : functions)
+		for (Function function : functions)
 		{
+			// Type Rule 10.3
 			// 전역 변수, 파라미터, 로컬 변수의 TypeMap 생성 및 체크
 			TypeMap newMap = new TypeMap();
 			newMap.putAll(tm);
@@ -95,9 +96,80 @@ public class StaticTypeCheck
 	}
 	
 	// 함수 하나의 V
-	public static void V(Function function, TypeMap newMap, Functions functions)
+	public static void V(Function function, TypeMap tm, Functions functions)
 	{
+		// 리턴 했는가
+		boolean hasReturn = false;
+		
+		// 함수 body 내용 iterate
+		Iterator<Statement> it = function.body.members.iterator();
+		while (it.hasNext())
+		{
+			Statement s = it.next();
+			// Return 문장 나옴.
+			if (s instanceof Return)
+			{
+				// 리턴은 한 번만 가능.
+				check(!hasReturn, "Function " + function.id + " has multiple return statements!");
+				hasReturn = true;
+				
+				V(s, tm, functions);
+			}
+			else
+			{
+				// 리턴 뒤에 다른 Statement 가 있으면 안됨.
+				check(!hasReturn, "Return must be last statement in function block (in function " + function.id + ")");
+				V(s, tm, functions);
+			}
+		}
+		
+		// Type Rule 10.4
+		// void 아니면 리턴이 필요하다.
+		if (!function.t.equals(Type.VOID) && !function.id.equals("main")) // ignore main (we cool like dat)
+		{
+			check(hasReturn, "Non-void function " + function.id + " missing return statement!");
+		}
+		
+		// Type Rule 10.5
+		// void 함수는 리턴이 있으면 안됨
+		else if (function.t.equals(Type.VOID))
+		{
+			check(!hasReturn, "Void function " + function.id + " has return statement when it shouldn't!");
+		}
+	}
 	
+	// Call
+	public static void V(Call call, TypeMap tm, Functions functions)
+	{
+		// 호출된 함수 가져옴.
+		Function function = functions.getFunction(call.name);
+		
+		// Type Rule 10.7
+		// 호출된 함수의 파라미터와 호출 시의 매개변수 가져옴.
+		Iterator<Declaration> funcIt = function.params.iterator();
+		Iterator<Expression> callIt = call.args.iterator();
+		// 함수의 파라미터 돌면서 체크.
+		while (funcIt.hasNext())
+		{
+			Declaration dec = funcIt.next();
+			
+			// make sure there's more arguments in the call
+			check(callIt.hasNext(), "Incorrect number of arguments for function call " + call.name);
+			// 없으면 종료
+			if (!callIt.hasNext())
+			{
+				break;
+			}
+			
+			Expression exp = callIt.next();
+			
+			// get the type of the expression and check if it's the same as the parameter type
+			Type expType = typeOf(exp, tm, functions);
+			check(dec.t == expType, "Wrong type in parameter for " + dec.v + " of function " + call.name + " (got a " + expType + ", expected a " + dec.t + ")");
+		}
+		
+		// given too many arguments
+		check(!callIt.hasNext(), "Incorrect number of arguments for function call " + call.name);
 	}
 	
 	// Expression 의 타입을 tm(TypeMap)에서 가져온다.
@@ -117,7 +189,7 @@ public class StaticTypeCheck
 			return (Type) tm.get(v);
 		}
 		// Call
-		if(e instanceof Call)
+		if (e instanceof Call)
 		{
 			Call c = (Call) e;
 			Function f = functions.getFunction(c.name);
@@ -186,6 +258,17 @@ public class StaticTypeCheck
 		{
 			return;
 		}
+		// Expression 형태로 함수 call
+		if (e instanceof Call)
+		{
+			// Type Rule 10.6
+			// Expression 형태의 Call 은 non-void 만 가능.
+			Call call = (Call) e;
+			Function function = functions.getFunction(call.name);
+			check(!function.t.equals(Type.VOID), "Call Expression must be a non-void type function!");
+			V((Call) e, tm, functions);
+			return;
+		}
 		// 변수이면 선언 되었는지 체크
 		if (e instanceof Variable)
 		{
@@ -232,7 +315,7 @@ public class StaticTypeCheck
 		
 		// student exercise
 		// Unary 연산자.
-		else if(e instanceof Unary)
+		else if (e instanceof Unary)
 		{
 			Unary u = (Unary) e;
 			
@@ -308,6 +391,8 @@ public class StaticTypeCheck
 			Type ttype = (Type) tm.get(a.target);
 			Type srctype = typeOf(a.source, tm, functions);
 			
+			// Type Rule 10.8
+			// 함수의 리턴형과 연산 타입이 같아야 됨.
 			// target, source 서로 다를 경우
 			if (ttype != srctype)
 			{
@@ -370,6 +455,28 @@ public class StaticTypeCheck
 			
 			return;
 		}
+		// Statement 형태로 함수 call
+		// Call 만 있는 경우
+		if (s instanceof Call)
+		{
+			// Type Rule 10.6
+			// Statement 형태의 Call 은 void 만 가능.
+			Call call = (Call)s;
+			Function function = functions.getFunction(call.name);
+			check(function.t.equals(Type.VOID), "Call Statement must be a void type function!");
+			V((Call) s, tm, functions);
+			return;
+		}
+		// Return
+		if (s instanceof Return)
+		{
+			Return r = (Return) s;
+			Function f = functions.getFunction(r.target.toString());
+			Type t = typeOf(r.result, tm, functions);
+			check(t.equals(f.t), "Return expression doesn't match function's return type! (got a " + t + ", expected a " + f.t + ")");
+			
+			return;
+		}
 		throw new IllegalArgumentException("should never reach here");
 	}
 	
@@ -377,7 +484,7 @@ public class StaticTypeCheck
 	{
 		//Parser parser  = new Parser(new Lexer(args[0]));
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/functions.cpp";
+		String fileName = "../Test Programs/fib.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		
 		// 프로그램 파싱

@@ -1,8 +1,11 @@
+import com.sun.org.apache.regexp.internal.RE;
+
 import java.util.*;
 
 public class TypeTransformer
 {
 	static boolean errorOccurred = false;
+	
 	// 에러 출력
 	public static void error(String msg)
 	{
@@ -13,17 +16,53 @@ public class TypeTransformer
 	// 전체 프로그램 Transform
 	public static Program T(Program p, TypeMap tm)
 	{
-		Block body = (Block) T(p.body, tm, p.functions);
-		return new Program(p.decpart, body);
+		// 전역 변수 TypeMap
+		TypeMap globalMap = StaticTypeCheck.typing(p.globals);
+		Functions functions = p.functions;
+		
+		// Transform 후의 Functions
+		Functions transformedFunctions = new Functions();
+		
+		// 모든 함수에 대해 transform 진행.
+		for (Function f : p.functions)
+		{
+			// 매개변수, 로컬변수 파라미터
+			TypeMap newMap = new TypeMap();
+			newMap.putAll(globalMap);
+			newMap.putAll(StaticTypeCheck.typing(f.params));
+			newMap.putAll(StaticTypeCheck.typing(f.locals));
+			
+			// 함수의 body Transform
+			Block transformedBody = (Block) T(f.body, newMap, functions);
+			
+			// Function Transform
+			transformedFunctions.add(new Function(f.t, f.id, f.params, f.locals, transformedBody));
+		}
+		
+		return new Program(p.globals, transformedFunctions);
 	}
 	
 	// Transform
 	public static Expression T(Expression e, TypeMap tm, Functions functions)
 	{
-		// 값은 그대로
+		// 값, Call 은 그대로
 		if (e instanceof Value)
 		{
 			return e;
+		}
+		// Call 일 경우
+		if (e instanceof Call)
+		{
+			Call c = (Call) e;
+			ArrayList<Expression> transformedExpression = new ArrayList<>();
+			
+			// args 모두 순회하며 Transform
+			for (Expression expression : c.args)
+			{
+				transformedExpression.add(T(expression, tm, functions));
+			}
+			
+			return new Call(c.name, transformedExpression);
 		}
 		// 변수도 그대로
 		if (e instanceof Variable)
@@ -105,6 +144,27 @@ public class TypeTransformer
 		{
 			return s;
 		}
+		// Call 일 경우
+		if (s instanceof Call)
+		{
+			Call c = (Call) s;
+			ArrayList<Expression> transformedExpression = new ArrayList<>();
+			
+			// args 모두 순회하며 Transform
+			for (Expression expression : c.args)
+			{
+				transformedExpression.add(T(expression, tm, functions));
+			}
+			
+			return new Call(c.name, transformedExpression);
+		}
+		// Return 일 경우
+		if (s instanceof Return)
+		{
+			Return r = (Return) s;
+			
+			return new Return(r.target, T(r.result, tm, functions));
+		}
 		// Assignment 일 경우.
 		if (s instanceof Assignment)
 		{
@@ -176,7 +236,7 @@ public class TypeTransformer
 	public static void main(String args[])
 	{
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/clone.cpp";
+		String fileName = "../Test Programs/functions.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		//Parser parser  = new Parser(new Lexer(args[0]));
 		
@@ -184,10 +244,9 @@ public class TypeTransformer
 		prog.display();           // student exercise
 		
 		// 타입 체킹
-		System.out.println("\nBegin type checking...");
-		System.out.println("Type map:");
-		TypeMap map = StaticTypeCheck.typing(prog.decpart);
-		map.display();    // student exercise
+		System.out.println("Globals = ");
+		TypeMap map = StaticTypeCheck.typing(prog.globals);
+		map.display();
 		
 		StaticTypeCheck.V(prog);
 		Program out = T(prog, map);

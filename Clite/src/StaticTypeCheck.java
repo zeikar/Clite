@@ -74,6 +74,12 @@ public class StaticTypeCheck
 		// 전체 프로그램 V
 		// -> 각 함수별로 체크
 		V(p.functions, typing(p.globals));
+		
+		// 에러 없다면 출력
+		if(!hasTypeError)
+		{
+			System.out.println("\nNo type errors :P\n");
+		}
 	}
 	
 	// 각 함수 별로 Validate 체크
@@ -522,11 +528,6 @@ public class StaticTypeCheck
 		map.display();
 		
 		V(prog);
-		
-		if(!hasTypeError)
-		{
-			System.out.println("No type errors :P");
-		}
 	} //main
 	
 } // class StaticTypeCheck

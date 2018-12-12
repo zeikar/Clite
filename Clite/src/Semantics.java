@@ -16,7 +16,11 @@ public class Semantics
 			// main 함수부터 인터프리터 시작.
 			stateFrame.pushState(initialState(p.globals));
 			
-			return M(new Call("main", new ArrayList<>()), stateFrame, p.functions);
+			stateFrame = M(new Call("main", new ArrayList<>()), stateFrame, p.functions);
+			// 마지막 State pop
+			stateFrame.popState();
+			
+			return stateFrame;
 		}
 		// 뭔가 에러 발생
 		catch (Exception e)
@@ -89,14 +93,22 @@ public class Semantics
 		{
 			Statement statement = members.next();
 			
+			// 다른 Statement 에서 리턴했으면 함수 이름이 있음
+			if(stateFrame.get(new Variable(call.name)) != null && !stateFrame.get(new Variable(call.name)).isUndef())
+			{
+				Display.print(0, "Returning " + call.name);
+				stateFrame.display();
+				
+				return stateFrame;
+			}
+			
 			// 리턴이면 함수 종료.
 			if (statement instanceof Return)
 			{
 				Return r = (Return) statement;
 				// 리턴할 값 계산.
 				Value returnValue = M(r.result, stateFrame, functions);
-				// pop 한 후 삽입
-				stateFrame.popState();
+				// 삽입
 				stateFrame.put(r.target, returnValue);
 				
 				Display.print(0, "Returning " + call.name);
@@ -114,9 +126,6 @@ public class Semantics
 		// Display
 		Display.print(0, "Returning " + call.name);
 		stateFrame.display();
-		
-		// pop
-		stateFrame.popState();
 		
 		return stateFrame;
 	}
@@ -151,7 +160,24 @@ public class Semantics
 			Call call = (Call) s;
 			// 함수 이름 State 제거
 			state = M(call, state, functions);
-			//state.remove(new Variable(call.name));
+			state.popState();
+			return state;
+		}
+		// Return!!!
+		if (s instanceof Return)
+		{
+			Return r = (Return) s;
+			
+			// 이미 리턴했으면 무시
+			if(state.get(r.target) != null && !state.get(r.target).isUndef())
+			{
+				return state;
+			}
+			// 리턴할 값 계산.
+			Value returnValue = M(r.result, state, functions);
+			// 삽입
+			state.put(r.target, returnValue);
+			
 			return state;
 		}
 		throw new IllegalArgumentException("should never reach here");
@@ -428,7 +454,7 @@ public class Semantics
 			state = M(c, state, functions);
 			// 리턴 받고 삭제
 			Value returnValue = state.get(new Variable(c.name));
-			state.remove(new Variable(c.name));
+			state.popState();
 			return returnValue;
 		}
 		throw new IllegalArgumentException("should never reach here");
@@ -438,7 +464,7 @@ public class Semantics
 	{
 		// Parser parser  = new Parser(new Lexer(args[0]));
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/functions.cpp";
+		String fileName = "../Test Programs/recFib.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		
 		Program prog = parser.program();

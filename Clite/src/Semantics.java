@@ -2,26 +2,21 @@
 // The meaning M of a Statement is a State
 // The meaning M of a Expression is a Value
 
-import com.sun.org.apache.regexp.internal.RE;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Semantics
 {
-	State globalState;
-	
 	// M 함수. 전체 프로그램의 M(Meaning) 반환.
-	State M(Program p)
+	StateFrame M(Program p)
 	{
+		StateFrame stateFrame = new StateFrame();
 		try
 		{
 			// main 함수부터 인터프리터 시작.
-			// 처음은 전역 변수와  main 의 파라미터, 로컬 변수로 초기화.
-			globalState = initialState(p.globals);
-			State mainState = (State) globalState.clone();
+			stateFrame.pushState(initialState(p.globals));
 			
-			return M(new Call("main", new ArrayList<>()), mainState, p.functions);
+			return M(new Call("main", new ArrayList<>()), stateFrame, p.functions);
 		}
 		// 뭔가 에러 발생
 		catch (Exception e)
@@ -29,7 +24,7 @@ public class Semantics
 			e.printStackTrace();
 			System.err.println("There are some Syntax/Type errors. Please fix them first!");
 		}
-		return initialState(new Declarations());
+		return stateFrame;
 	}
 	
 	// 초기 상태.
@@ -46,15 +41,18 @@ public class Semantics
 	}
 	
 	// 함수 Call interpret
-	State M(Call call, State state, Functions functions)
+	StateFrame M(Call call, StateFrame stateFrame, Functions functions)
 	{
 		// Call 하는 함수 가져옴.
 		Function function = functions.getFunction(call.name);
 		
+		// 새로운 State
+		State newState = new State();
+		
 		// 로컬 변수 추가.
 		for (Declaration declaration : function.locals)
 		{
-			state.put(declaration.v, Value.mkValue(declaration.t));
+			newState.put(declaration.v, Value.mkValue(declaration.t));
 		}
 		
 		// 매개변수와 파라미터의 이터레이터.
@@ -66,21 +64,24 @@ public class Semantics
 			Expression expression = argIt.next();
 			Declaration declaration = funcIt.next();
 			// 매개변수 값 계산.
-			Value value = M(expression, state, functions);
+			Value value = M(expression, stateFrame, functions);
 			// 파라미터에 넣음.
-			state.put(declaration.v, value);
+			newState.put(declaration.v, value);
 		}
+		
+		// 추가
+		stateFrame.pushState(newState);
 		
 		// 현재 함수도 State 에 넣음
 		// main 의 경우는 넣지 않는다.
 		if (!call.name.equals(Token.mainTok.value()))
 		{
-			state.put(new Variable(call.name), Value.mkValue(functions.getFunction(call.name).t));
+			stateFrame.put(new Variable(call.name), Value.mkValue(functions.getFunction(call.name).t));
 		}
 		
 		// Call Display
 		Display.print(0, "Calling " + call.name);
-		state.display();
+		stateFrame.display();
 		
 		// 함수 body 의 모든 Statement 계산.
 		Iterator<Statement> members = function.body.members.iterator();
@@ -93,36 +94,35 @@ public class Semantics
 			{
 				Return r = (Return) statement;
 				// 리턴할 값 계산.
-				Value returnValue = M(r.result, state, functions);
-				state.put(r.target, returnValue);
-				break;
+				Value returnValue = M(r.result, stateFrame, functions);
+				// pop 한 후 삽입
+				stateFrame.popState();
+				stateFrame.put(r.target, returnValue);
+				
+				Display.print(0, "Returning " + call.name);
+				stateFrame.display();
+				
+				return stateFrame;
 			}
 			// 아니면 Statement 계산
 			else
 			{
-				state = M(statement, state, functions);
+				stateFrame = M(statement, stateFrame, functions);
 			}
 		}
 		
 		// Display
 		Display.print(0, "Returning " + call.name);
-		state.display();
+		stateFrame.display();
 		
-		// 현재 상태에서 local 변수와 파라미터 변수 제거.
-		for (Declaration declaration : function.locals)
-		{
-			state.remove(declaration.v);
-		}
-		for (Declaration declaration : function.params)
-		{
-			state.remove(declaration.v);
-		}
+		// pop
+		stateFrame.popState();
 		
-		return state;
+		return stateFrame;
 	}
 	
 	// M 함수. 타입에 따라 호출.
-	State M(Statement s, State state, Functions functions)
+	StateFrame M(Statement s, StateFrame state, Functions functions)
 	{
 		if (s instanceof Skip)
 		{
@@ -151,26 +151,26 @@ public class Semantics
 			Call call = (Call) s;
 			// 함수 이름 State 제거
 			state = M(call, state, functions);
-			state.remove(new Variable(call.name));
+			//state.remove(new Variable(call.name));
 			return state;
 		}
 		throw new IllegalArgumentException("should never reach here");
 	}
 	
 	// skip 일 경우는 그냥 state 리턴
-	State M(Skip s, State state, Functions functions)
+	StateFrame M(Skip s, StateFrame state, Functions functions)
 	{
 		return state;
 	}
 	
 	// 대입일 경우는 source 의 결과를 target 으로 넣음.
-	State M(Assignment a, State state, Functions functions)
+	StateFrame M(Assignment a, StateFrame state, Functions functions)
 	{
 		return state.onion(a.target, M(a.source, state, functions));
 	}
 	
 	// 블록의 경우는 모든 statement 에 대해 M 호출.
-	State M(Block b, State state, Functions functions)
+	StateFrame M(Block b, StateFrame state, Functions functions)
 	{
 		for (Statement s : b.members)
 		{
@@ -180,7 +180,7 @@ public class Semantics
 	}
 	
 	// 조건문의 경우는 조건문의 결과에 따라 조건문이 true 이면 then, 아니면 else.
-	State M(Conditional c, State state, Functions functions)
+	StateFrame M(Conditional c, StateFrame state, Functions functions)
 	{
 		if (M(c.test, state, functions).boolValue())
 		{
@@ -193,7 +193,7 @@ public class Semantics
 	}
 	
 	// 루프이면 조건문(test)가 true 일 경우 계속해서 body 를 계산.
-	State M(Loop l, State state, Functions functions)
+	StateFrame M(Loop l, StateFrame state, Functions functions)
 	{
 		if (M(l.test, state, functions).boolValue())
 		{
@@ -399,7 +399,7 @@ public class Semantics
 	}
 	
 	// Expression 계산. 각각에 대해 M 함수 호출.
-	Value M(Expression e, State state, Functions functions)
+	Value M(Expression e, StateFrame state, Functions functions)
 	{
 		if (e instanceof Value)
 		{
@@ -407,7 +407,7 @@ public class Semantics
 		}
 		if (e instanceof Variable)
 		{
-			return (Value) (state.get(e));
+			return (Value) (state.get((Variable) e));
 		}
 		if (e instanceof Binary)
 		{
@@ -455,7 +455,7 @@ public class Semantics
 		out.display();    // student exercise
 		
 		Semantics semantics = new Semantics();
-		State state = semantics.M(out);
+		StateFrame state = semantics.M(out);
 		System.out.println("Final State");
 		state.display();  // student exercise
 	}

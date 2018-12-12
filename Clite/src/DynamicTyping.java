@@ -3,13 +3,18 @@
 // The meaning M of a Statement is a State.
 // The meaning M of a Expression is a Value.
 
+import java.util.ArrayList;
+
 public class DynamicTyping extends Semantics
 {
 	
 	// M 함수. 전체 프로그램의 M(Meaning) 반환.
-	State M(Program p)
+	StateFrame M(Program p)
 	{
-		return M(p.functions.getFunction(Token.mainTok.value()).body, initialState(p.globals), p.functions);
+		StateFrame stateFrame = new StateFrame();
+		stateFrame.pushState(initialState(p.globals));
+		
+		return M(new Call("main", new ArrayList<>()), stateFrame, p.functions);
 	}
 	
 	// Binary 연산자 적용.
@@ -231,7 +236,7 @@ public class DynamicTyping extends Semantics
 		Program prog = parser.program();
 		prog.display();    // student exercise
 		DynamicTyping dynamic = new DynamicTyping();
-		State state = dynamic.M(prog);
+		StateFrame state = dynamic.M(prog);
 		System.out.println("Final State");
 		state.display();   // student exercise
 	}

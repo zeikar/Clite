@@ -94,11 +94,12 @@ class StateFrame
 		Display.print(1, "---------------------------------------");
 		
 		Iterator<State> stateIterator = stateStack.iterator();
-		while (stateIterator.hasNext())
-		{
-			stateIterator.next().display();
-			Display.print(2, "---------------------------------------");
-		}
+		
+		State global = stateIterator.next();
+		State top = stateStack.peek();
+		
+		global.display();
+		top.display();
 		
 		Display.print(1, "---------------------------------------");
 	}

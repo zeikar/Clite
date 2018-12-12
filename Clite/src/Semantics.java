@@ -464,7 +464,7 @@ public class Semantics
 	{
 		// Parser parser  = new Parser(new Lexer(args[0]));
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/recFib.cpp";
+		String fileName = "../Test Programs/gcd.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		
 		Program prog = parser.program();

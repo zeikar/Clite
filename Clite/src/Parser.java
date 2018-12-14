@@ -239,12 +239,11 @@ public class Parser
 		match(TokenType.Semicolon);
 	}
 	
-	// <<Type>> 타입 반환. int | bool | float | char
+	// <<Type>> 타입 반환. int | bool | float | char | void
 	private Type type()
 	{
-		// Type  -->  int | bool | float | char
+		// Type  -->  int | bool | float | char | void
 		Type t = null;
-		// student exercise
 		// int
 		if (token.type().equals(TokenType.Int))
 		{
@@ -280,10 +279,10 @@ public class Parser
 		return t;
 	}
 	
-	// <<Statement>> 1개 반환. ;(Skip) | Block | Assignment | IfStatement | WhileStatement
+	// <<Statement>> 1개 반환. ;(Skip) | Block | Assignment | IfStatement | WhileStatement | Return | Call
 	private Statement statement()
 	{
-		// Statement --> ;(Skip) | Block | Assignment | IfStatement | WhileStatement
+		// Statement --> ;(Skip) | Block | Assignment | IfStatement | WhileStatement | Return | Call
 		Statement s = new Skip();
 		// student exercise
 		
@@ -315,6 +314,11 @@ public class Parser
 				match(TokenType.Semicolon);
 				s = c;
 			}
+			// 에러.
+			else
+			{
+				error("Statement (;(Skip) | Block | Assignment | IfStatement | WhileStatement | Return | FunctionCall)");
+			}
 		}
 		// <<IfStatement>>
 		else if (token.type().equals(TokenType.If))
@@ -334,7 +338,7 @@ public class Parser
 		// 에러.
 		else
 		{
-			error("Statement (;(Skip) | Block | Assignment | IfStatement | WhileStatement)");
+			error("Statement (;(Skip) | Block | Assignment | IfStatement | WhileStatement | Return | FunctionCall)");
 		}
 		
 		return s;
@@ -641,7 +645,7 @@ public class Parser
 		// 에러
 		else
 		{
-			error("Identifier | Literal | ( | Type");
+			error("Identifier | Literal | ( Expression ) | Type ( Expression ) | Identifier(Arguments)");
 		}
 		return e;
 	}

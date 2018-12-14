@@ -6,8 +6,8 @@ import java.util.*;
 
 class Program
 {
-	// Program = Declarations decpart ; Block body
-	// <<Declarations>>  <<Statements>>
+	// Program = Declarations globals ; Functions functions
+	// <<Declarations>>  <<Functions>>
 	Declarations globals;
 	Functions functions;
 	

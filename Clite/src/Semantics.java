@@ -26,7 +26,7 @@ public class Semantics
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			System.err.println("There are some Syntax/Type errors. Please fix them first!");
+			System.err.println("There are some errors. Please fix them!");
 		}
 		return stateFrame;
 	}
@@ -464,7 +464,7 @@ public class Semantics
 	{
 		// Parser parser  = new Parser(new Lexer(args[0]));
 		// 명령 인자방식이 아닌 직접 입력 방식 사용
-		String fileName = "../Test Programs/gcd.cpp";
+		String fileName = "../Test Programs/functions.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		
 		Program prog = parser.program();

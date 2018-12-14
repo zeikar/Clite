@@ -208,6 +208,12 @@ public class StaticTypeCheck
 		{
 			Call c = (Call) e;
 			Function f = functions.getFunction(c.name);
+			// 선언되지 않은 함수는 에러.
+			if(f == null)
+			{
+				check(f != null, "undefined function: " + c.name);
+				return Type.VOID;
+			}
 			return f.t;
 		}
 		// Binary 연산자
@@ -280,8 +286,16 @@ public class StaticTypeCheck
 			// Expression 형태의 Call 은 non-void 만 가능.
 			Call call = (Call) e;
 			Function function = functions.getFunction(call.name);
-			check(!function.t.equals(Type.VOID), "Call Expression must be a non-void type function!");
-			V((Call) e, tm, functions);
+			// 함수가 선언 되었는지 확인
+			if(function == null)
+			{
+				check(function != null, "undeclared function: " + call.name);
+			}
+			else
+			{
+				check(!function.t.equals(Type.VOID), "Call Expression must be a non-void type function!");
+				V((Call) e, tm, functions);
+			}
 			return;
 		}
 		// 변수이면 선언 되었는지 체크

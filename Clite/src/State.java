@@ -48,7 +48,7 @@ class StateFrame
 		Iterator<State> stateIterator = stateStack.listIterator();
 		State global = stateIterator.next();
 		
-		if(top.get(key) != null)
+		if (top.get(key) != null)
 		{
 			return top.get(key);
 		}
@@ -65,7 +65,7 @@ class StateFrame
 		Iterator<State> stateIterator = stateStack.listIterator();
 		State global = stateIterator.next();
 		
-		if(top.get(key) != null)
+		if (top.get(key) != null)
 		{
 			top.put(key, val);
 		}
@@ -98,8 +98,16 @@ class StateFrame
 		State global = stateIterator.next();
 		State top = stateStack.peek();
 		
-		global.display();
-		top.display();
+		// 중복 출력 방지
+		if (global.equals(top))
+		{
+			global.display();
+		}
+		else
+		{
+			global.display();
+			top.display();
+		}
 		
 		Display.print(1, "---------------------------------------");
 	}

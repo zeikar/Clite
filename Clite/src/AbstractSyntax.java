@@ -706,7 +706,7 @@ class Operator
 	final static String DIV = "/";
 	// UnaryOp = !
 	final static String NOT = "!";
-	final static String NEG = "-";
+	final static String NEG = "- (NEG)";
 	// CastOp = int | float | char
 	final static String INT = "int";
 	final static String FLOAT = "float";
@@ -725,7 +725,7 @@ class Operator
 	final static String INT_TIMES = "INT*";
 	final static String INT_DIV = "INT/";
 	// UnaryOp = !
-	final static String INT_NEG = "-";
+	final static String INT_NEG = "-INT";
 	// RelationalOp = < | <= | == | != | >= | >
 	final static String FLOAT_LT = "FLOAT<";
 	final static String FLOAT_LE = "FLOAT<=";
@@ -739,7 +739,7 @@ class Operator
 	final static String FLOAT_TIMES = "FLOAT*";
 	final static String FLOAT_DIV = "FLOAT/";
 	// UnaryOp = !
-	final static String FLOAT_NEG = "-";
+	final static String FLOAT_NEG = "-FLOAT";
 	// RelationalOp = < | <= | == | != | >= | >
 	final static String CHAR_LT = "CHAR<";
 	final static String CHAR_LE = "CHAR<=";
@@ -844,7 +844,7 @@ class Operator
 	final static String boolMap[][] = {
 			{EQ, BOOL_EQ}, {NE, BOOL_NE}, {LT, BOOL_LT},
 			{LE, BOOL_LE}, {GT, BOOL_GT}, {GE, BOOL_GE},
-			{AND, AND}, {OR, OR}
+			{AND, AND}, {OR, OR}, {NOT, NOT}
 	};
 	
 	final static private Operator map(String[][] tmap, String op)

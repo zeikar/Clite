@@ -589,7 +589,18 @@ public class Parser
 		// Factor --> [ UnaryOp ] Primary
 		if (isUnaryOp())
 		{
-			Operator op = new Operator(match(token.type()));
+			TokenType type = token.type();
+			Operator op;
+			// MINUS 일 경우는 NEG 로 바꿈
+			if(type.equals(TokenType.Minus))
+			{
+				match(type);
+				op = new Operator("- (NEG)");
+			}
+			else
+			{
+				op = new Operator(match(type));
+			}
 			Expression term = primary();
 			return new Unary(op, term);
 		}
@@ -798,7 +809,7 @@ public class Parser
 	public static void main(String args[])
 	{
 		//Parser parser  = new Parser(new Lexer(args[0]));
-		String fileName = "../Test Programs/recFib.cpp";
+		String fileName = "../Test Programs/cast.cpp";
 		Parser parser = new Parser(new Lexer(fileName));
 		Display.print(0, "Begin parsing... " + fileName + "\n");
 		Program prog = parser.program();

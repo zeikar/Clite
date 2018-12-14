@@ -363,7 +363,7 @@ public class StaticTypeCheck
 			// float, int 에만 사용 가능.
 			else if (u.op.NegateOp())
 			{
-				check(t == Type.INT && t == Type.FLOAT,
+				check(t == Type.INT || t == Type.FLOAT,
 						u.op + ": non-int or non-float operand");
 			}
 			// int 캐스팅 연산자.
